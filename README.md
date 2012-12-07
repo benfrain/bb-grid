@@ -52,9 +52,5 @@ Here is how you would layout 7 UI elements:
 			@include bb-block(1,omega);
 		}
 	}
-	.select-item {
-		font-size: .8em;
-		text-align: center;
-	}
 }
 ````
