@@ -1,7 +1,7 @@
 #bb-grid
 =======
 
-##A simple responsive Sass based grid 'thingy' to lay out UI elements
+##A simple, responsive, Sass based grid 'thingy' to lay out UI elements
 
 ###Why?
 
