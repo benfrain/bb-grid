@@ -1,0 +1,164 @@
+// ====================================================================
+// Functions
+// ====================================================================
+
+// BB-opos reverses flow from left to right - used for alpha and omega elements (taken and renamed from Salsa https://github.com/tsi/Salsa)
+// ====================================================================
+
+// Returns the oposite direction of $bb-flow
+// $bb-flow: may be 'left' or 'right'.
+@function bb-opos($bb-flow) {
+	@if $bb-flow == right {
+		@return left;
+	}
+	@else {
+		@return right;
+	}
+}
+
+// This simply converts the margin value from auto to a zero for calculation purposes. It is employed in the bb-container mixin
+@function margin-control($bb-grid-margin) {
+	@if $bb-grid-margin == auto {
+		@return 0;
+	}
+	@else {
+		@return $bb-grid-margin;
+	}
+}
+
+// ====================================================================
+// Setting (defaults)
+// ====================================================================
+
+// Set a width for the container element in %.
+$bb-container-width: 100% !default;
+
+// Set the number of columns in the bb-grid.
+// Tip - To minimize browser rounding issues, try to use a number that 100 (the default % amount) is cleanly divisible by, e.g. use 24 instead of 12 or 5 rather than 6.
+$bb-columns: 24 !default;
+
+// Set gutter width.
+$bb-gutter-width: 1.5% !default;
+
+// Flow directionality, set $bb-flow to 'right' for an Right to Left bb-grid. $bb-opos is automatically set to the opposite of $bb-flow.
+$bb-flow: left !default;
+$bb-opos: bb-opos($bb-flow);
+
+// ====================================================================
+// Mixins - the bits you use to control things
+// ====================================================================
+
+// Apply the bb-container mixin to your outer-most container element. It defaults to a 100% wide element with margin: auto; on either side.
+
+// Example @include bb-container(5%) would add 5% margin either side and reduce the bb-container width by 10% (sum of 5% margin on either side)
+
+@mixin bb-container($bb-grid-margin: auto) {
+	width: $bb-container-width - (margin-control($bb-grid-margin) * 2);
+	margin: {
+		#{$bb-flow}: $bb-grid-margin;
+		#{$bb-opos}: $bb-grid-margin;
+	}
+	@if $bb-flow == left {
+		float: left;
+	}
+	@else {
+		float: right;
+	}
+	@include clearfix;
+}
+
+// ---------------------------------------------------------------------------
+// bb-grid Rows
+// Apply bb-row to any bb-container element to force a new bb-grid row.
+
+@mixin bb-row {
+	clear: $bb-flow;
+}
+
+// Apply bb-unrow to cancel the previous mixin's effect
+@mixin bb-unrow {
+	clear: none;
+}
+
+// bb-block is the 'Meat and Potatos' of the grid, used to specify a block width and position.
+
+// Example: @include bb-block(2,3) - a block 2 units wide, starting at position 3
+
+@mixin bb-block($bb-width, $bb-position: false) {
+
+	// General Gutter control
+	padding: {
+		#{$bb-flow}: 0;
+		#{$bb-opos}: $bb-gutter-width;
+	}
+
+	// Width
+	width: $bb-container-width / $bb-columns * $bb-width;
+
+	// Positioning
+	float: #{$bb-flow};
+	@include clearfix;
+
+	// For the first item in a grid
+	@if $bb-position == alpha {
+		// If we have a left to right row
+		@if $bb-flow == left {
+			margin: {
+				#{$bb-flow}: 0;
+				#{$bb-opos}: -$bb-container-width / $bb-columns * $bb-width;
+			}
+		}
+		// If we have a right to left row
+		@if $bb-flow == right {
+			margin: {
+				right: 0;
+				left: -$bb-container-width / $bb-columns * $bb-width;
+			}
+			padding: {
+				left: 0;
+				#{$bb-opos}: 0;
+			}
+		}
+	}
+
+	// For the last item in a grid
+	@else if $bb-position == omega {
+
+		@if $bb-flow == left {
+			// Gutter control
+			padding: {
+				#{$bb-flow}: 0;
+				#{$bb-opos}: 0;
+			}
+			// Positioning
+			float: #{$bb-opos};
+			margin: {
+				#{$bb-flow}: -$bb-width;
+				#{$bb-opos}: 0;
+			}
+		}
+		@if $bb-flow == right {
+			float: left;
+			margin: {
+				left: -$bb-width;
+				#{$bb-opos}: 0;
+			}
+		}
+
+	}
+	// For everything else (items that are neither alpha or omega)
+	@else {
+		@if $bb-flow == left {
+			margin: {
+				#{$bb-flow}: $bb-container-width / $bb-columns * ($bb-position - 1);
+				#{$bb-opos}: -$bb-container-width / $bb-columns * $bb-position;
+			}
+		}
+		@if $bb-flow == right {
+			margin: {
+				right: $bb-container-width / $bb-columns * ($bb-position - 1);
+				left: -$bb-container-width / $bb-columns * $bb-position;
+			}
+		}
+	}
+}
