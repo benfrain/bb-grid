@@ -84,7 +84,7 @@ Some examples:
 ````
 
 ##How to install
-Just download and include, or copy and paste the _bb-grid.scss file into your project.
+Just download and include, or copy and paste the ```_bb-grid.scss``` file into your project.
 
 ###Dependencies
 You will need Sass & Compass to use bb-grids
