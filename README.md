@@ -56,18 +56,18 @@ $bb-gutter-width: 1%;
 //$bb-flow: right;
 ````
 
-$bb-columns - the amount of columns you want to lay out
-$bb-gutter-width - the amount of space (as a percentage of the grid) to be used as gutter between grid columns
-@include bb-background - a mixin you can use to show a background of the grid you are implementing (useful for debugging) - comment out when not needed
-$bb-flow - set to 'left' by default - set to 'right' to reverse the flow of the grid items.
+- ```$bb-columns``` - the amount of columns you want to lay out
+- ```$bb-gutter-width``` - the amount of space (as a percentage of the grid) to be used as gutter between grid columns
+- ```@include bb-background``` - a mixin you can use to show a background of the grid you are implementing (useful for debugging) - comment out when not needed
+- ```$bb-flow``` - set to 'left' by default - set to 'right' to reverse the flow of the grid items.
 
 Then just use the following mixin to layout any container:
 
-@include bb-block(<amount of columns>, <position);
+```@include bb-block(<amount of columns>, <position>);```
 
 The amount of columns should be passed as a number - for example, if you have a 10 column grid and you want the element to span 70% you would use '7'.
 
-The position can be either 'alpha' (if it's the first item in a grid), a number or 'omega' (if it's the last item in a grid).
+The position can be either '```alpha```' (if it's the first item in a grid), a number such as ```2``` or ```3``` (other numbers are available ;)) or '```omega```' (if it's the last item in a grid).
 
 Some examples:
 
