@@ -2,8 +2,7 @@
 // Functions
 // ====================================================================
 
-// BB-opos reverses flow from left to right - used for alpha and omega elements 
-// (taken and renamed from Salsa https://github.com/tsi/Salsa)
+// BB-opos reverses flow from left to right - used for alpha and omega elements (taken and renamed from Salsa https://github.com/tsi/Salsa)
 // ====================================================================
 
 // Returns the oposite direction of $bb-flow
@@ -24,6 +23,15 @@
 	}
 	@else {
 		@return $bb-grid-margin;
+	}
+}
+
+@function omegaAdjust($bb-position) {
+	@if $bb-position == omega {
+		@return $bb-columns - $bb-width - 1;
+	}
+	@else {
+		@return $bb-position;
 	}
 }
 
@@ -87,6 +95,11 @@ $bb-opos: bb-opos($bb-flow);
 
 @mixin bb-block($bb-width, $bb-position: false) {
 
+	// Variable for the width of a single 'unit' of the grid
+	$item-width: $bb-container-width / $bb-columns;
+	// Variable for the width of a 'block' for example the span of columns
+	$block-width: $bb-container-width / $bb-columns * $bb-width;
+
 	// General Gutter control
 	padding: {
 		#{$bb-flow}: 0;
@@ -94,7 +107,7 @@ $bb-opos: bb-opos($bb-flow);
 	}
 
 	// Width
-	width: $bb-container-width / $bb-columns * $bb-width;
+	width: $item-width * $bb-width;
 
 	// Positioning
 	float: #{$bb-flow};
@@ -106,14 +119,14 @@ $bb-opos: bb-opos($bb-flow);
 		@if $bb-flow == left {
 			margin: {
 				#{$bb-flow}: 0;
-				#{$bb-opos}: -$bb-container-width / $bb-columns * $bb-width;
+				#{$bb-opos}: -$item-width * $bb-width;
 			}
 		}
 		// If we have a right to left row
 		@if $bb-flow == right {
 			margin: {
 				right: 0;
-				left: -$bb-container-width / $bb-columns * $bb-width;
+				left: -$item-width * $bb-width;
 			}
 			padding: {
 				left: 0;
@@ -124,7 +137,7 @@ $bb-opos: bb-opos($bb-flow);
 
 	// For the last item in a grid
 	@else if $bb-position == omega {
-
+		$omega-position: $bb-columns - $bb-width;
 		@if $bb-flow == left {
 			// Gutter control
 			padding: {
@@ -132,10 +145,11 @@ $bb-opos: bb-opos($bb-flow);
 				#{$bb-opos}: 0;
 			}
 			// Positioning
-			float: #{$bb-opos};
+			float: #{$bb-flow};
 			margin: {
-				#{$bb-flow}: -$bb-width;
-				#{$bb-opos}: 0;
+
+				#{$bb-flow}: $item-width * ($bb-columns - $bb-width);
+				#{$bb-opos}: -$item-width * ($bb-columns - $bb-width) - ($bb-container-width / $bb-columns * $bb-width);
 			}
 		}
 		@if $bb-flow == right {
@@ -149,17 +163,49 @@ $bb-opos: bb-opos($bb-flow);
 	}
 	// For everything else (items that are neither alpha or omega)
 	@else {
+
 		@if $bb-flow == left {
+			// Width of the item
+
+
+			float: #{$bb-flow};
 			margin: {
-				#{$bb-flow}: $bb-container-width / $bb-columns * ($bb-position - 1);
-				#{$bb-opos}: -$bb-container-width / $bb-columns * $bb-position;
+				#{$bb-flow}: ($bb-position - 1) * $item-width;
+				#{$bb-opos}: -(($bb-position - 1) + $bb-width) * $item-width;
 			}
 		}
 		@if $bb-flow == right {
+			float: #{$bb-opos};
 			margin: {
 				right: $bb-container-width / $bb-columns * ($bb-position - 1);
-				left: -$bb-container-width / $bb-columns * $bb-position;
+				left: -$bb-container-width / $bb-columns * ($bb-position - 1) - ($bb-container-width / $bb-columns * $bb-width);
 			}
 		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// bb-grid Background
+//
+
+// Apply this to your container to get a visible bb-grid background generated
+// on-the-fly using css3 gradients. These can be used for testing your elements
+// positioning on the bb-grid.
+@mixin bb-background {
+
+	$bb-space : $bb-gutter-width / 2;
+	$bb-column: $bb-container-width / $bb-columns - $bb-gutter-width;
+
+	@include column-grid-background($bb-columns, $bb-column, $bb-gutter-width, $bb-space, #15690e, #25b718, true);
+
+	// bb-grid toggler (as in Sasson)
+	background-repeat: repeat-x;
+	@include transition(background-size 0.5s);
+
+	.grid-background & {
+		background-size: 100% 0;
+	}
+	.grid-visible & {
+		background-size: 100% 100%;
 	}
 }
