@@ -16,6 +16,17 @@
 	}
 }
 
+// This function merely removes the percentage value when a zero padding is applied via the $bb-gutter-width property.
+@function percentage-stripped($bb-gutter-width) {
+	@if $bb-gutter-width == 0 {
+		// One day I'd like to be as smart as Eric A Meyer: http://stackoverflow.com/questions/12328259/how-do-you-strip-the-unit-from-any-number-in-sass
+		@return $bb-gutter-width / ($bb-gutter-width * 0 + 1);
+	}
+	@else {
+		@return $bb-gutter-width;
+	}
+}
+
 // This simply converts the margin value from auto to a zero for calculation purposes. It is employed in the bb-container mixin
 @function margin-control($bb-grid-margin) {
 	@if $bb-grid-margin == auto {
@@ -100,85 +111,143 @@ $bb-opos: bb-opos($bb-flow);
 	// Variable for the width of a 'block' for example the span of columns
 	$block-width: $bb-container-width / $bb-columns * $bb-width;
 
-	// General Gutter control
-	padding: {
-		#{$bb-flow}: 0;
-		#{$bb-opos}: $bb-gutter-width;
-	}
-
-	// Width
-	width: $item-width * $bb-width;
-
-	// Positioning
-	float: #{$bb-flow};
-	@include clearfix;
-
 	// For the first item in a grid
 	@if $bb-position == alpha {
+
+		// Width regardless
+		width: $item-width * $bb-width;
+
+		// Clearfix regardless
+		@include clearfix;
+
 		// If we have a left to right row
 		@if $bb-flow == left {
+
+			// Flow - float right or left
+			float: #{$bb-flow};
+
+			// Position of element within grid
 			margin: {
 				#{$bb-flow}: 0;
 				#{$bb-opos}: -$item-width * $bb-width;
 			}
+
+			// Gutter control
+			padding: {
+				#{$bb-flow}: percentage-stripped($bb-gutter-width);
+				#{$bb-opos}: percentage-stripped($bb-gutter-width);
+			}
+
 		}
 		// If we have a right to left row
 		@if $bb-flow == right {
+			// Flow - float right or left
+			float: #{$bb-flow};
+
+			// Position of element within grid
 			margin: {
 				right: 0;
 				left: -$item-width * $bb-width;
 			}
+
+			// Gutter control
 			padding: {
-				left: 0;
-				#{$bb-opos}: 0;
+				left: $bb-gutter-width;
+				#{$bb-opos}: $bb-gutter-width;
 			}
 		}
 	}
 
 	// For the last item in a grid
 	@else if $bb-position == omega {
+
+		// Width regardless
+		width: $item-width * $bb-width;
+
+		// Positioning
+		@include clearfix;
+
 		$omega-position: $bb-columns - $bb-width;
+
 		@if $bb-flow == left {
-			// Gutter control
-			padding: {
-				#{$bb-flow}: 0;
-				#{$bb-opos}: 0;
-			}
+
 			// Positioning
 			float: #{$bb-flow};
-			margin: {
 
+			margin: {
 				#{$bb-flow}: $item-width * ($bb-columns - $bb-width);
 				#{$bb-opos}: -$item-width * ($bb-columns - $bb-width) - ($bb-container-width / $bb-columns * $bb-width);
 			}
+			// Gutter control
+			padding: {
+				#{$bb-flow}: percentage-stripped($bb-gutter-width);
+				#{$bb-opos}: percentage-stripped($bb-gutter-width);
+			}
+
 		}
+
 		@if $bb-flow == right {
-			float: left;
+
+			// Flow - float right or left
+			float: #{$bb-flow};
+
+			// Position of element within grid
 			margin: {
 				left: -$bb-width;
 				#{$bb-opos}: 0;
 			}
-		}
 
+			// Gutter control
+			padding: {
+				#{$bb-flow}: percentage-stripped($bb-gutter-width);
+				#{$bb-opos}: percentage-stripped($bb-gutter-width);
+			}
+		}
 	}
+
 	// For everything else (items that are neither alpha or omega)
-	@else {
+	@else if round($bb-position) == $bb-position {
+		// Width
+		width: $item-width * $bb-width;
+
+		// Positioning
+		@include clearfix;
 
 		@if $bb-flow == left {
-			// Width of the item
 
-
+			// Flow - float right or left
 			float: #{$bb-flow};
+
+			// Position of the item
 			margin: {
 				#{$bb-flow}: ($bb-position - 1) * $item-width;
 				#{$bb-opos}: -(($bb-position - 1) + $bb-width) * $item-width;
 			}
+
+			// Gutter control
+			padding: {
+				#{$bb-flow}: percentage-stripped($bb-gutter-width);
+				#{$bb-opos}: percentage-stripped($bb-gutter-width);
+			}
+
+
+
 		}
 		@if $bb-flow == right {
+
+			// Flow - float right or left
 			float: #{$bb-opos};
+
+			// Position of the item
 			margin: {
 				right: $bb-container-width / $bb-columns * ($bb-position - 1);
 				left: -$bb-container-width / $bb-columns * ($bb-position - 1) - ($bb-container-width / $bb-columns * $bb-width);
+			}
+
+			// Gutter control
+			padding: {
+				#{$bb-flow}: percentage-stripped($bb-gutter-width);
+				#{$bb-opos}: percentage-stripped($bb-gutter-width);
 			}
 		}
 	}
