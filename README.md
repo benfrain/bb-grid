@@ -5,7 +5,7 @@
 
 ### Update March 2013
 
-Susy now has a container relative mixin (called isolate-grid) to deal with this issue too. I'd therefore advise that this little project is now largely redundant. It still works fine and can be used in isolation for container relative layouts but for fuller grid building experiences I recommend the incredible Susy grid system.
+Susy now has a container relative mixin (called isolate-grid) to deal with this issue too. I'd therefore advise that this little project is now largely redundant. It still works fine and can be used to produce container relative layouts but for a fuller grid building experience I recommend the incredible Susy grid system.
 
 ###Why?
 
