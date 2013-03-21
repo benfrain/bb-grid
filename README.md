@@ -3,6 +3,10 @@
 
 ##A simple, responsive, Sass based grid 'thingy' to lay out UI elements
 
+### Update March 2013
+
+Susy now has a container relative mixin (called isolate-grid) to deal with this issue too. I'd therefore advise that this little project is now largely redundant. It still works fine and can be used in isolation for container relative layouts but for fuller grid building experiences I recommend the incredible Susy grid system.
+
 ###Why?
 
 bb-grids was borne out of the frustration of sub-pixel rounding (<a href="http://benfra.in/1z3">a blog post with more info on the issue is here</a>) when trying to layout UI elements within a grid or arbitary container.
